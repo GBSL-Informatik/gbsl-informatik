@@ -1,16 +1,39 @@
 {
 	"name": "gbsl-informatik",
 	"displayName": "gbsl-informatik",
+	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
+	"homepage": "https://github.com/GBSL-Informatik/gbsl-informatik/blob/master/README.md",
+	"bugs": {
+		"url": "https://github.com/GBSL-Informatik/gbsl-informatik/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/GBSL-Informatik/gbsl-informatik"
+	},
+    "icon": "logo.png",
+    "galleryBanner": {
+        "color": "#ffffff",
+        "theme": "light"
+    },
 	"categories": [
 		"Other"
 	],
+    "extensionPack": [
+        "lebalz.python2go",
+        "ms-python.python",
+        "bierner.markdown-preview-github-styles",
+        "LittleFoxTeam.vscode-python-test-adapter",
+        "hbenl.vscode-test-explorer",
+        "formulahendry.code-runner"
+    ],
 	"activationEvents": [
-        "onCommand:gbsl-informatik.helloWorld"
+		"onStartupFinished"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

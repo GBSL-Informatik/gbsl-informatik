@@ -1,65 +1,26 @@
-# gbsl-informatik README
+# GBSL Informatik VS Code Extension Pack
 
-This is the README for your extension "gbsl-informatik". After writing up a brief description, we recommend including the following sections.
+![gbsl](logo.jpeg)
 
-## Features
+Install the extension from the [Marketplace](https://marketplace.visualstudio.com/items?itemName=lebalz.ispw-programming-basics).
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+This extension pack adds the following vs code plugins:
 
-For example if there is an image subfolder under your extension project workspace:
+- [Git2Go](https://marketplace.visualstudio.com/items?itemName=lebalz.git2go)
+- [Python2Go](https://marketplace.visualstudio.com/items?itemName=lebalz.python2go)
+- [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+- [Markdown Preview Github Styles](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles)
+- [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph)
+- [Python Test Adapter](https://marketplace.visualstudio.com/items?itemName=LittleFoxTeam.vscode-python-test-adapter)
+- [Test Explorer](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer)
+- [Code Runner](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner)
 
-\!\[feature X\]\(images/feature-x.png\)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Installation
 
-## Requirements
+You will see popping up some error/information messages pointing out that some dependencies (Git, Python) are not installed on your system. To install these dependencies, run the following commands (this may take up to 5 Minutes to complete):
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- View > Command Palette... > `Python2Go: Install`
+    - **windows**: you may be prompted to allow vs code running powershell with administrator privileges.
 
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Then restart your vs code and start using it 🎉
