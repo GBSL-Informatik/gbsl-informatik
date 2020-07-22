@@ -1,6 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import { join } from "path";
+import { readFileSync } from "fs";
 
 const PIP_PACKAGES = [
   "pylint",
@@ -22,7 +24,7 @@ interface PipPackage {
 function configure() {
   vscode.window.showInformationMessage(`Configure vs code`);
   const configuration = vscode.workspace.getConfiguration();
-  configuration
+  return configuration
     .update(
       "python.languageServer",
       "Microsoft",
@@ -48,9 +50,24 @@ function configure() {
         true,
         vscode.ConfigurationTarget.Global
       );
-    }).then(() => {
+    })
+    .then(() => {
+      configuration.update(
+        "python.dataScience.alwaysTrustNotebooks",
+        true,
+        vscode.ConfigurationTarget.Global
+      );
+    })
+    .then(() => {
       vscode.window.showInformationMessage(`configuration done`);
     });
+}
+
+function extensionVersion(context: vscode.ExtensionContext) {
+  var extensionPath = join(context.extensionPath, "package.json");
+  var packageFile = JSON.parse(readFileSync(extensionPath, 'utf8'));
+
+  return packageFile?.version ?? '0.0.1';
 }
 
 // this method is called when your extension is activated
@@ -74,8 +91,15 @@ export function activate(context: vscode.ExtensionContext) {
               );
             }
             return new Promise((resolve) => resolve());
-          }).then(() => {
-            return configure();
+          })
+          .then(() => {
+            const configVersion = context.globalState.get('configVersion');
+            const pluginVersion = extensionVersion(context);
+            if (configVersion !== pluginVersion) {
+              return configure().then(() => {
+                context.globalState.update('configVersion', pluginVersion);
+              });
+            }
           });
       }
     });
