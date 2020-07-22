@@ -3,7 +3,7 @@
 	"displayName": "gbsl-informatik",
 	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -16,7 +16,7 @@
 		"type": "git",
 		"url": "https://github.com/GBSL-Informatik/gbsl-informatik"
 	},
-    "icon": "logo.png",
+    "icon": "logo.jpeg",
     "galleryBanner": {
         "color": "#ffffff",
         "theme": "light"
@@ -29,8 +29,7 @@
         "ms-python.python",
         "bierner.markdown-preview-github-styles",
         "LittleFoxTeam.vscode-python-test-adapter",
-        "hbenl.vscode-test-explorer",
-        "formulahendry.code-runner"
+        "hbenl.vscode-test-explorer"
     ],
 	"activationEvents": [
 		"onStartupFinished"
