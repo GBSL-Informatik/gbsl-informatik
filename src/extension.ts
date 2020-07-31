@@ -14,6 +14,7 @@ const PIP_PACKAGES = [
   "numpy",
   "scipy",
   "pandas",
+  "termcolor"
 ];
 
 interface PipPackage {
@@ -87,7 +88,7 @@ export function activate(context: vscode.ExtensionContext) {
             if (toInstall.length > 0) {
               return vscode.commands.executeCommand(
                 "python2go.pip",
-                `install ${toInstall.join(" ")}`
+                `install --user ${toInstall.join(" ")}`
               );
             }
             return new Promise((resolve) => resolve());
