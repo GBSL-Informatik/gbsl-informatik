@@ -11,10 +11,18 @@ const PIP_PACKAGES = [
   "pytest",
   "matplotlib",
   "jupyter",
+  "ipython",
   "numpy",
   "scipy",
   "pandas",
-  "termcolor"
+  "termcolor",
+  "smartphone-connector",
+  "pyfiglet",
+  "cowsay",
+  "inquirer",
+  "gTTS",
+  "playsound",
+  "pynput"
 ];
 
 interface PipPackage {
