@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { join } from "path";
+import { join, resolve } from "path";
 import { readFileSync } from "fs";
 
 const PIP_PACKAGES = [
@@ -65,6 +65,12 @@ function setConfig() {
 }
 
 function configure() {
+  const configuration = vscode.workspace.getConfiguration();
+  const skip = configuration.get('gbsl.ignore_configurations', false);
+  if (skip) {
+    vscode.window.showInformationMessage('GBSL Configuration is ignored. Edit your settings');
+    return new Promise(resolve => resolve());
+  }
   vscode.window.showInformationMessage(`Configure vs code`);
   return Promise.all(setConfig()).then(() => {
     vscode.window.showInformationMessage(`configuration done`);
@@ -81,6 +87,7 @@ function extensionVersion(context: vscode.ExtensionContext) {
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  const configuration = vscode.workspace.getConfiguration();
   vscode.commands
     .executeCommand("python2go.isPythonInstalled")
     .then((isInstalled) => {
@@ -101,6 +108,9 @@ export function activate(context: vscode.ExtensionContext) {
             return new Promise((resolve) => resolve());
           })
           .then(() => {
+            if (configuration.get('gbsl.ignore_configurations', false)) {
+              return;
+            }
             const configVersion = context.globalState.get("configVersion");
             const pluginVersion = extensionVersion(context);
             if (configVersion !== pluginVersion) {
