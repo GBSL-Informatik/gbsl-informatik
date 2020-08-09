@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { join, resolve } from "path";
+import { join } from "path";
 import { readFileSync } from "fs";
 
 const PIP_PACKAGES = [
@@ -9,9 +9,9 @@ const PIP_PACKAGES = [
   "flake8",
   "autopep8",
   "pytest",
+  "ipython",
   "matplotlib",
   "jupyter",
-  "ipython",
   "numpy",
   "scipy",
   "pandas",
