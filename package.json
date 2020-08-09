@@ -3,7 +3,7 @@
 	"displayName": "gbsl-informatik",
 	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -29,7 +29,9 @@
 		"ms-python.python",
 		"bierner.markdown-preview-github-styles",
 		"LittleFoxTeam.vscode-python-test-adapter",
-		"hbenl.vscode-test-explorer"
+		"hbenl.vscode-test-explorer",
+		"zhuangtongfa.material-theme",
+		"visualstudioexptteam.vscodeintellicode"
 	],
 	"activationEvents": [
 		"onStartupFinished"

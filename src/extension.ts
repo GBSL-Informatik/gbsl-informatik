@@ -41,6 +41,7 @@ const DEFAULT_USER_SETTINGS = {
   "python.dataScience.stopOnFirstLineWhileDebugging": false,
   "python.formatting.autopep8Args": ["--select=E,W", "--max-line-length=120"],
   "editor.minimap.enabled": false,
+  "workbench.settings.useSplitJSON": true,
 };
 
 interface PipPackage {
@@ -51,9 +52,15 @@ interface PipPackage {
 function setConfig() {
   const configuration = vscode.workspace.getConfiguration();
   return Object.entries(DEFAULT_USER_SETTINGS).map(async ([key, value]) => {
-    return await configuration
-      .update(key as any, value, vscode.ConfigurationTarget.Global)
-      .then(() => console.log("done: ", key));
+    try {
+      return await configuration.update(
+        key as any,
+        value,
+        vscode.ConfigurationTarget.Global
+      );
+    } catch (error) {
+      return await setTimeout(() => {}, 0);
+    }
   });
 }
 
