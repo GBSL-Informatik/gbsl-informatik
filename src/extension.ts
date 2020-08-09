@@ -100,9 +100,10 @@ export function activate(context: vscode.ExtensionContext) {
               (pkg) => !packages.some((installed) => installed.package === pkg)
             );
             if (toInstall.length > 0) {
+              const target = process.platform === 'win32' ? '--user' : '';
               return vscode.commands.executeCommand(
                 "python2go.pip",
-                `install --user ${toInstall.join(" ")}`
+                `install ${target} ${toInstall.join(" ")}`
               );
             }
             return new Promise((resolve) => resolve());
