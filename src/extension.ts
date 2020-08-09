@@ -22,61 +22,53 @@ const PIP_PACKAGES = [
   "inquirer",
   "gTTS",
   "playsound",
-  "pynput"
+  "pynput",
 ];
+
+const DEFAULT_USER_SETTINGS = {
+  "workbench.colorTheme": "One Dark Pro",
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection":
+    "automaticallyOverrodeDefaultValue",
+  "keyboard.dispatch": "keyCode",
+  "editor.mouseWheelZoom": true,
+  "python.languageServer": "Microsoft",
+  "workbench.activityBar.visible": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.dataScience.alwaysTrustNotebooks": true,
+  "python.dataScience.askForKernelRestart": false,
+  "python.dataScience.stopOnFirstLineWhileDebugging": false,
+  "python.formatting.autopep8Args": ["--select=E,W", "--max-line-length=120"],
+  "editor.minimap.enabled": false,
+};
 
 interface PipPackage {
   package: string;
   version: string;
 }
 
+function setConfig() {
+  const configuration = vscode.workspace.getConfiguration();
+  return Object.entries(DEFAULT_USER_SETTINGS).map(async ([key, value]) => {
+    return await configuration
+      .update(key as any, value, vscode.ConfigurationTarget.Global)
+      .then(() => console.log("done: ", key));
+  });
+}
+
 function configure() {
   vscode.window.showInformationMessage(`Configure vs code`);
-  const configuration = vscode.workspace.getConfiguration();
-  return configuration
-    .update(
-      "python.languageServer",
-      "Microsoft",
-      vscode.ConfigurationTarget.Global
-    )
-    .then(() => {
-      configuration.update(
-        "editor.mouseWheelZoom",
-        true,
-        vscode.ConfigurationTarget.Global
-      );
-    })
-    .then(() => {
-      configuration.update(
-        "python.linting.pylintEnabled",
-        true,
-        vscode.ConfigurationTarget.Global
-      );
-    })
-    .then(() => {
-      configuration.update(
-        "python.linting.enabled",
-        true,
-        vscode.ConfigurationTarget.Global
-      );
-    })
-    .then(() => {
-      configuration.update(
-        "python.dataScience.alwaysTrustNotebooks",
-        true,
-        vscode.ConfigurationTarget.Global
-      );
-    })
-    .then(() => {
-      vscode.window.showInformationMessage(`configuration done`);
-    });
+  return Promise.all(setConfig()).then(() => {
+    vscode.window.showInformationMessage(`configuration done`);
+  });
 }
 
 function extensionVersion(context: vscode.ExtensionContext) {
   var extensionPath = join(context.extensionPath, "package.json");
-  var packageFile = JSON.parse(readFileSync(extensionPath, 'utf8'));
+  var packageFile = JSON.parse(readFileSync(extensionPath, "utf8"));
 
-  return packageFile?.version ?? '0.0.1';
+  return packageFile?.version ?? "0.0.1";
 }
 
 // this method is called when your extension is activated
@@ -102,16 +94,26 @@ export function activate(context: vscode.ExtensionContext) {
             return new Promise((resolve) => resolve());
           })
           .then(() => {
-            const configVersion = context.globalState.get('configVersion');
+            const configVersion = context.globalState.get("configVersion");
             const pluginVersion = extensionVersion(context);
             if (configVersion !== pluginVersion) {
               return configure().then(() => {
-                context.globalState.update('configVersion', pluginVersion);
+                context.globalState.update("configVersion", pluginVersion);
               });
             }
           });
       }
     });
+
+  let configureDisposer = vscode.commands.registerCommand(
+    "gbsl.configure",
+    () => {
+      return configure().then(() => {
+        vscode.window.showInformationMessage("Configured GBSL settings");
+      });
+    }
+  );
+  context.subscriptions.push(configureDisposer);
 }
 
 // this method is called when your extension is deactivated
