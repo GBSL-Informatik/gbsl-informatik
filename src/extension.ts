@@ -23,13 +23,14 @@ const PIP_PACKAGES = [
   "gTTS",
   "playsound",
   "pynput",
+  "gbsl-turtle"
 ];
 
 const DEFAULT_USER_SETTINGS = {
   "workbench.colorTheme": "One Dark Pro",
   "editor.suggestSelection": "first",
   "vsintellicode.modify.editor.suggestSelection":
-    "automaticallyOverrodeDefaultValue",
+  "automaticallyOverrodeDefaultValue",
   "keyboard.dispatch": "keyCode",
   "editor.mouseWheelZoom": true,
   "python.languageServer": "Microsoft",
@@ -123,15 +124,15 @@ export function activate(context: vscode.ExtensionContext) {
       }
     });
 
-  let configureDisposer = vscode.commands.registerCommand(
-    "gbsl.configure",
-    () => {
-      return configure().then(() => {
-        vscode.window.showInformationMessage("Configured GBSL settings");
-      });
-    }
-  );
-  context.subscriptions.push(configureDisposer);
+    let configureDisposer = vscode.commands.registerCommand(
+      "gbsl.configure",
+      () => {
+        return configure().then(() => {
+          vscode.window.showInformationMessage("Configured GBSL settings");
+        });
+      }
+    );
+    context.subscriptions.push(configureDisposer);
 }
 
 // this method is called when your extension is deactivated
