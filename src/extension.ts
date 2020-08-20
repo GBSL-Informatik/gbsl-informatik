@@ -95,6 +95,7 @@ function extensionVersion(context: vscode.ExtensionContext): string {
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
   const configuration = vscode.workspace.getConfiguration();
+  // vscode.commands.executeCommand('setContext', 'python.showPlayIcon', false);
   vscode.commands
     .executeCommand("python2go.isPythonInstalled")
     .then((isInstalled) => {
@@ -145,19 +146,12 @@ export function activate(context: vscode.ExtensionContext) {
           .then(() => {
             const configVersion = (context.globalState.get("configVersion") ??
               "0.0.0") as string;
-            const pluginVersion = extensionVersion(context);
-            const updateConfig = pluginVersion > configVersion;
-            if (pluginVersion === "0.0.14") {
-              configuration.update(
-                "gbsl.ignore_configurations",
-                false,
-                vscode.ConfigurationTarget.Global
-              );
-            }
-
-            if (pluginVersion !== "0.0.14" && configuration.get("gbsl.ignore_configurations", false)) {
+            if (configuration.get("gbsl.ignore_configurations", false)) {
               return;
             }
+            const pluginVersion = extensionVersion(context);
+            const updateConfig = pluginVersion > configVersion;
+
             if (updateConfig) {
               return configure(true).then(() => {
                 context.globalState.update("configVersion", pluginVersion);
@@ -175,7 +169,43 @@ export function activate(context: vscode.ExtensionContext) {
       });
     }
   );
+
+  let runDebugDisposer = vscode.commands.registerCommand(
+    "gbsl.run_debug",
+    () => {
+      return vscode.debug.startDebugging(undefined, {
+        name: "Python: Aktuelle Datei",
+        type: "python",
+        request: "launch",
+        program: "${file}",
+        console: "integratedTerminal",
+        internalConsoleOptions: "neverOpen",
+        justMyCode: true,
+        showReturnValue: true,
+        stopOnEntry: false,
+      });
+    }
+  );
+
+  let runDebugAndStopDisposer = vscode.commands.registerCommand(
+    "gbsl.run_and_stop",
+    () => {
+      return vscode.debug.startDebugging(undefined, {
+        name: "Python: Aktuelle Datei und Stopp beim Start",
+        type: "python",
+        request: "launch",
+        program: "${file}",
+        console: "integratedTerminal",
+        internalConsoleOptions: "neverOpen",
+        justMyCode: true,
+        showReturnValue: true,
+        stopOnEntry: true,
+      });
+    }
+  );
   context.subscriptions.push(configureDisposer);
+  context.subscriptions.push(runDebugDisposer);
+  context.subscriptions.push(runDebugAndStopDisposer);
 }
 
 // this method is called when your extension is deactivated
