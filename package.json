@@ -3,7 +3,7 @@
 	"displayName": "gbsl-informatik",
 	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
-	"version": "0.0.15",
+	"version": "0.0.16",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -60,7 +60,7 @@
 			{
 				"command": "gbsl.run_and_stop",
 				"category": "GBSL",
-				"title": "Programm Ausführen",
+				"title": "Programm Ausführen, am Anfang warten",
 				"icon": {
 					"light": "resources/light/debug-file-and-stop.svg",
 					"dark": "resources/dark/debug-file-and-stop.svg"
@@ -70,14 +70,14 @@
 		"menus": {
 			"editor/title": [
                 {
-                    "command": "gbsl.run_and_stop",
-                    "title": "Programm ausführen, am Anfang warten",
+                    "command": "gbsl.run_debug",
+                    "title": "Programm ausführen",
 					"group": "navigation",
 					"when": "resourceLangId == python"
 				},
                 {
-                    "command": "gbsl.run_debug",
-                    "title": "Programm ausführen",
+                    "command": "gbsl.run_and_stop",
+                    "title": "Programm ausführen, am Anfang warten",
 					"group": "navigation",
 					"when": "resourceLangId == python"
 				}
