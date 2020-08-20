@@ -4,36 +4,44 @@ import * as vscode from "vscode";
 import { join } from "path";
 import { readFileSync } from "fs";
 
-const PIP_PACKAGES = [
-  "pylint",
-  "flake8",
-  "autopep8",
-  "pytest",
-  "ipython",
-  "matplotlib",
-  "jupyter",
-  "numpy",
-  "scipy",
-  "pandas",
-  "termcolor",
-  "smartphone-connector",
-  "pyfiglet",
-  "cowsay",
-  "inquirer",
-  "gTTS",
-  "playsound",
-  "pynput",
-  "gbsl-turtle"
+interface PipPackage {
+  package: string;
+  version: string;
+}
+
+interface ToInstallPipPackage {
+  package: string;
+  version?: string;
+}
+const PIP_PACKAGES: ToInstallPipPackage[] = [
+  { package: "pylint", version: undefined },
+  { package: "flake8", version: undefined },
+  { package: "autopep8", version: undefined },
+  { package: "pytest", version: undefined },
+  { package: "ipython", version: undefined },
+  { package: "matplotlib", version: undefined },
+  { package: "jupyter", version: undefined },
+  { package: "numpy", version: undefined },
+  { package: "scipy", version: undefined },
+  { package: "pandas", version: undefined },
+  { package: "termcolor", version: undefined },
+  { package: "smartphone-connector", version: undefined },
+  { package: "pyfiglet", version: undefined },
+  { package: "cowsay", version: undefined },
+  { package: "inquirer", version: undefined },
+  { package: "gTTS", version: undefined },
+  { package: "playsound", version: undefined },
+  { package: "pynput", version: undefined },
+  { package: "gbsl-turtle", version: undefined },
 ];
 
 const DEFAULT_USER_SETTINGS = {
   "workbench.colorTheme": "One Dark Pro",
   "editor.suggestSelection": "first",
   "vsintellicode.modify.editor.suggestSelection":
-  "automaticallyOverrodeDefaultValue",
+    "automaticallyOverrodeDefaultValue",
   "keyboard.dispatch": "keyCode",
   "editor.mouseWheelZoom": true,
-  "python.languageServer": "Microsoft",
   "workbench.activityBar.visible": true,
   "python.linting.pylintEnabled": true,
   "python.linting.enabled": true,
@@ -43,12 +51,8 @@ const DEFAULT_USER_SETTINGS = {
   "python.formatting.autopep8Args": ["--select=E,W", "--max-line-length=120"],
   "editor.minimap.enabled": false,
   "workbench.settings.useSplitJSON": true,
+  "python.languageServer": "Pylance",
 };
-
-interface PipPackage {
-  package: string;
-  version: string;
-}
 
 function setConfig() {
   const configuration = vscode.workspace.getConfiguration();
@@ -65,12 +69,14 @@ function setConfig() {
   });
 }
 
-function configure() {
+function configure(force: boolean = false) {
   const configuration = vscode.workspace.getConfiguration();
-  const skip = configuration.get('gbsl.ignore_configurations', false);
-  if (skip) {
-    vscode.window.showInformationMessage('GBSL Configuration is ignored. Edit your settings');
-    return new Promise(resolve => resolve());
+  const skip = configuration.get("gbsl.ignore_configurations", false);
+  if (skip && !force) {
+    vscode.window.showInformationMessage(
+      "GBSL Configuration is ignored. Edit your settings"
+    );
+    return new Promise((resolve) => resolve());
   }
   vscode.window.showInformationMessage(`Configure vs code`);
   return Promise.all(setConfig()).then(() => {
@@ -78,7 +84,7 @@ function configure() {
   });
 }
 
-function extensionVersion(context: vscode.ExtensionContext) {
+function extensionVersion(context: vscode.ExtensionContext): string {
   var extensionPath = join(context.extensionPath, "package.json");
   var packageFile = JSON.parse(readFileSync(extensionPath, "utf8"));
 
@@ -97,26 +103,63 @@ export function activate(context: vscode.ExtensionContext) {
           .executeCommand("python2go.pipPackages")
           .then((pkgs: any) => {
             const packages = pkgs as PipPackage[];
-            const toInstall = PIP_PACKAGES.filter(
-              (pkg) => !packages.some((installed) => installed.package === pkg)
+            const toUninstall = PIP_PACKAGES.filter((pkg) =>
+              packages.some(
+                (installed) =>
+                  installed.package === pkg.package &&
+                  pkg.version !== undefined &&
+                  installed.version !== pkg.version
+              )
             );
-            if (toInstall.length > 0) {
-              const target = process.platform === 'win32' ? '--user' : '';
-              return vscode.commands.executeCommand(
-                "python2go.pip",
-                `install ${target} ${toInstall.join(" ")}`
+            console.log(toUninstall);
+            return new Promise((resolve) => {
+              if (toUninstall.length === 0) {
+                return resolve(true);
+              }
+              return resolve(
+                vscode.commands.executeCommand(
+                  "python2go.pip",
+                  `uninstall -y ${toUninstall.map((p) => p.package).join(" ")}`
+                )
               );
-            }
-            return new Promise((resolve) => resolve());
+            }).then(() => {
+              const toInstall = PIP_PACKAGES.filter(
+                (pkg) =>
+                  !packages.some(
+                    (installed) => installed.package === pkg.package
+                  )
+              );
+              if (toInstall.length > 0) {
+                const target = process.platform === "win32" ? "--user" : "";
+                const toInstallPkgs = toInstall.map((pkg) =>
+                  pkg.version ? `${pkg.package}==${pkg.version}` : pkg.package
+                );
+                return vscode.commands.executeCommand(
+                  "python2go.pip",
+                  `install ${target} ${toInstallPkgs.join(" ")}`
+                );
+              }
+              return new Promise((resolve) => resolve());
+            });
           })
           .then(() => {
-            if (configuration.get('gbsl.ignore_configurations', false)) {
+            const configVersion = (context.globalState.get("configVersion") ??
+              "0.0.0") as string;
+            const pluginVersion = extensionVersion(context);
+            const updateConfig = pluginVersion > configVersion;
+            if (pluginVersion === "0.0.14") {
+              configuration.update(
+                "gbsl.ignore_configurations",
+                false,
+                vscode.ConfigurationTarget.Global
+              );
+            }
+
+            if (pluginVersion !== "0.0.14" && configuration.get("gbsl.ignore_configurations", false)) {
               return;
             }
-            const configVersion = context.globalState.get("configVersion");
-            const pluginVersion = extensionVersion(context);
-            if (configVersion !== pluginVersion) {
-              return configure().then(() => {
+            if (updateConfig) {
+              return configure(true).then(() => {
                 context.globalState.update("configVersion", pluginVersion);
               });
             }
@@ -124,15 +167,15 @@ export function activate(context: vscode.ExtensionContext) {
       }
     });
 
-    let configureDisposer = vscode.commands.registerCommand(
-      "gbsl.configure",
-      () => {
-        return configure().then(() => {
-          vscode.window.showInformationMessage("Configured GBSL settings");
-        });
-      }
-    );
-    context.subscriptions.push(configureDisposer);
+  let configureDisposer = vscode.commands.registerCommand(
+    "gbsl.configure",
+    () => {
+      return configure(true).then(() => {
+        vscode.window.showInformationMessage("Configured GBSL settings");
+      });
+    }
+  );
+  context.subscriptions.push(configureDisposer);
 }
 
 // this method is called when your extension is deactivated
