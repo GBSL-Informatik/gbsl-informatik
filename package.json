@@ -3,7 +3,7 @@
 	"displayName": "gbsl-informatik",
 	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
-	"version": "0.0.16",
+	"version": "0.0.17",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -42,11 +42,7 @@
 			{
 				"command": "gbsl.configure",
 				"category": "GBSL",
-				"title": "Configure",
-				"icon": {
-					"light": "run-file.svg",
-					"dark": "run-file.svg"
-				}
+				"title": "Configure"
 			},
 			{
 				"command": "gbsl.run_debug",
@@ -73,13 +69,13 @@
                     "command": "gbsl.run_debug",
                     "title": "Programm ausführen",
 					"group": "navigation",
-					"when": "resourceLangId == python"
+					"when": "resourceLangId == python && gbsl.showGreenPlayIcon"
 				},
                 {
                     "command": "gbsl.run_and_stop",
                     "title": "Programm ausführen, am Anfang warten",
 					"group": "navigation",
-					"when": "resourceLangId == python"
+					"when": "resourceLangId == python && gbsl.showYellowPlayIcon"
 				}
 			]
 		},
@@ -87,11 +83,33 @@
 			"title": "GBSL",
 			"properties": {
 				"gbsl.ignore_configurations": {
-					"type": [
-						"boolean"
-					],					
+					"type": "boolean",					
 					"default": false,
 					"description": "Wheter to ignore additional configuration settings performed by the gbsl extension"
+				},
+				"gbsl.runDebugConfiguration": {
+					"type": "object",
+					"default": {
+						"name": "Python: Aktuelle Datei",
+						"type": "python",
+						"request": "launch",
+						"program": "${file}",
+						"console": "integratedTerminal",
+						"internalConsoleOptions": "neverOpen",
+						"justMyCode": true,
+						"showReturnValue": true
+					  },
+					  "description": "Launch configuration to start debugging"
+				},
+				"gbsl.showGreenPlayIcon": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show the green run debug icon"
+				},
+				"gbsl.showYellowPlayIcon": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show the yellow run and wait debug icon"
 				}
 			}
 		}

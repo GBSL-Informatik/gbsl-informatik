@@ -95,7 +95,9 @@ function extensionVersion(context: vscode.ExtensionContext): string {
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
   const configuration = vscode.workspace.getConfiguration();
-  // vscode.commands.executeCommand('setContext', 'python.showPlayIcon', false);
+
+  vscode.commands.executeCommand('setContext', 'gbsl.showGreenPlayIcon', configuration.get('gbsl.showGreenPlayIcon'));
+  vscode.commands.executeCommand('setContext', 'gbsl.showYellowPlayIcon', configuration.get('gbsl.showYellowPlayIcon'));
   vscode.commands
     .executeCommand("python2go.isPythonInstalled")
     .then((isInstalled) => {
@@ -173,34 +175,18 @@ export function activate(context: vscode.ExtensionContext) {
   let runDebugDisposer = vscode.commands.registerCommand(
     "gbsl.run_debug",
     () => {
-      return vscode.debug.startDebugging(undefined, {
-        name: "Python: Aktuelle Datei",
-        type: "python",
-        request: "launch",
-        program: "${file}",
-        console: "integratedTerminal",
-        internalConsoleOptions: "neverOpen",
-        justMyCode: true,
-        showReturnValue: true,
-        stopOnEntry: false,
-      });
+      const launchConfig = vscode.workspace.getConfiguration().get("gbsl.runDebugConfiguration") as any;
+      launchConfig['stopOnEntry'] = false;
+      return vscode.debug.startDebugging(undefined, launchConfig);
     }
   );
 
   let runDebugAndStopDisposer = vscode.commands.registerCommand(
     "gbsl.run_and_stop",
     () => {
-      return vscode.debug.startDebugging(undefined, {
-        name: "Python: Aktuelle Datei und Stopp beim Start",
-        type: "python",
-        request: "launch",
-        program: "${file}",
-        console: "integratedTerminal",
-        internalConsoleOptions: "neverOpen",
-        justMyCode: true,
-        showReturnValue: true,
-        stopOnEntry: true,
-      });
+      const launchConfig = vscode.workspace.getConfiguration().get("gbsl.runDebugConfiguration") as any;
+      launchConfig['stopOnEntry'] = true;
+      return vscode.debug.startDebugging(undefined, launchConfig);
     }
   );
   context.subscriptions.push(configureDisposer);
