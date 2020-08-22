@@ -3,7 +3,7 @@
 	"displayName": "gbsl-informatik",
 	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
-	"version": "0.0.18",
+	"version": "0.0.19",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -43,42 +43,8 @@
 				"command": "gbsl.configure",
 				"category": "GBSL",
 				"title": "Configure"
-			},
-			{
-				"command": "gbsl.run_debug",
-				"category": "GBSL",
-				"title": "Programm Ausführen",
-				"icon": {
-					"light": "resources/light/debug-file.svg",
-					"dark": "resources/dark/debug-file.svg"
-				}
-			},
-			{
-				"command": "gbsl.run_and_stop",
-				"category": "GBSL",
-				"title": "Programm Ausführen, am Anfang warten",
-				"icon": {
-					"light": "resources/light/debug-file-and-stop.svg",
-					"dark": "resources/dark/debug-file-and-stop.svg"
-				}
 			}
 		],
-		"menus": {
-			"editor/title": [
-                {
-                    "command": "gbsl.run_debug",
-                    "title": "Programm ausführen",
-					"group": "navigation",
-					"when": "resourceLangId == python && gbsl.showGreenPlayIcon"
-				},
-                {
-                    "command": "gbsl.run_and_stop",
-                    "title": "Programm ausführen, am Anfang warten",
-					"group": "navigation",
-					"when": "resourceLangId == python && gbsl.showYellowPlayIcon"
-				}
-			]
-		},
 		"configuration": {
 			"title": "GBSL",
 			"properties": {
@@ -86,30 +52,6 @@
 					"type": "boolean",					
 					"default": false,
 					"description": "Wheter to ignore additional configuration settings performed by the gbsl extension"
-				},
-				"gbsl.runDebugConfiguration": {
-					"type": "object",
-					"default": {
-						"name": "Python: Aktuelle Datei",
-						"type": "python",
-						"request": "launch",
-						"program": "${file}",
-						"console": "integratedTerminal",
-						"internalConsoleOptions": "neverOpen",
-						"justMyCode": true,
-						"showReturnValue": true
-					  },
-					  "description": "Launch configuration to start debugging"
-				},
-				"gbsl.showGreenPlayIcon": {
-					"type": "boolean",
-					"default": true,
-					"description": "Show the green run debug icon"
-				},
-				"gbsl.showYellowPlayIcon": {
-					"type": "boolean",
-					"default": true,
-					"description": "Show the yellow run and wait debug icon"
 				}
 			}
 		}
