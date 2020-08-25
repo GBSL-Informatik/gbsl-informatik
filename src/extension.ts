@@ -63,10 +63,12 @@ const DEFAULT_USER_SETTINGS = {
     "**/__pycache__": true,
     "**/.vscode": true,
   },
-  "python.linting.pylintArgs": [
-    "--load-plugin",
-    "pylint_protobuf"
-  ],
+  "python.linting.pylintArgs": ["--load-plugin", "pylint_protobuf"],
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "[python]": {
+    "editor.tabSize": 4,
+  },
 };
 
 function setConfig() {
