@@ -3,7 +3,7 @@
 	"displayName": "gbsl-informatik",
 	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
-	"version": "0.0.21",
+	"version": "0.0.22",
 	"engines": {
 		"vscode": "^1.47.0"
 	},

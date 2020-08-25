@@ -53,6 +53,16 @@ const DEFAULT_USER_SETTINGS = {
   "workbench.settings.useSplitJSON": true,
   "python.languageServer": "Pylance",
   "breadcrumbs.enabled": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/.pytest_cache": true,
+    "**/__pycache__": true,
+    "**/.vscode": true,
+  },
 };
 
 function setConfig() {
@@ -174,18 +184,30 @@ export function activate(context: vscode.ExtensionContext) {
     const updateConfig = pluginVersion > configVersion;
 
     if (updateConfig) {
-      return configure(true).then(() => {
-        context.globalState.update("configVersion", pluginVersion);
-      });
+      return configure(true)
+        .then(() => {
+          context.globalState.update("configVersion", pluginVersion);
+        })
+        .then(() => {
+          return vscode.commands.executeCommand(
+            "workbench.action.reloadWindow"
+          );
+        });
     }
   });
 
   let configureDisposer = vscode.commands.registerCommand(
     "gbsl.configure",
     () => {
-      return configure(true).then(() => {
-        vscode.window.showInformationMessage("Configured GBSL settings");
-      });
+      return configure(true)
+        .then(() => {
+          vscode.window.showInformationMessage("Configured GBSL settings");
+        })
+        .then(() => {
+          return vscode.commands.executeCommand(
+            "workbench.action.reloadWindow"
+          );
+        });
     }
   );
 
