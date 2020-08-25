@@ -69,6 +69,7 @@ const DEFAULT_USER_SETTINGS = {
   "[python]": {
     "editor.tabSize": 4,
   },
+  "python.analysis.autoImportCompletions": false,
 };
 
 function setConfig() {
