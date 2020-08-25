@@ -32,7 +32,7 @@ const PIP_PACKAGES: ToInstallPipPackage[] = [
   { package: "gTTS", version: undefined },
   { package: "playsound", version: undefined },
   { package: "pynput", version: undefined },
-  { package: "gbsl-turtle", version: "0.0.7" },
+  { package: "gbsl-turtle", version: "0.0.8" },
 ];
 
 const DEFAULT_USER_SETTINGS = {
