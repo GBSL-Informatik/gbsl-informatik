@@ -63,6 +63,10 @@ const DEFAULT_USER_SETTINGS = {
     "**/__pycache__": true,
     "**/.vscode": true,
   },
+  "python.linting.pylintArgs": [
+    "--load-plugin",
+    "pylint_protobuf"
+  ],
 };
 
 function setConfig() {
