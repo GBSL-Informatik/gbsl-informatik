@@ -3,7 +3,7 @@
 	"displayName": "gbsl-informatik",
 	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
-	"version": "0.0.20",
+	"version": "0.0.21",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -52,6 +52,11 @@
 					"type": "boolean",					
 					"default": false,
 					"description": "Wheter to ignore additional configuration settings performed by the gbsl extension"
+				},
+				"gbsl.ignorePipInstall": {
+					"type": "boolean",					
+					"default": false,
+					"description": "Wheter to ignore automatic installation of pip packages"
 				}
 			}
 		}
