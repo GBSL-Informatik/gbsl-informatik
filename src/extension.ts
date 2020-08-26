@@ -9,6 +9,13 @@ interface PipPackage {
   version: string;
 }
 
+interface PyVersion {
+  major: number;
+  minor: number;
+  release: number;
+  version: string;
+}
+
 interface ToInstallPipPackage {
   package: string;
   version?: string;
@@ -141,47 +148,69 @@ function uninstallWrongPipVersions() {
     });
 }
 
-function installPipPackages() {
+function isPythonInstalled(): Thenable<PyVersion | undefined | false> {
+  return vscode.commands.executeCommand<PyVersion | false>(
+    "python2go.isPythonInstalled"
+  );
+}
+
+function installPipPackages(): Thenable<boolean> {
   if (vscode.workspace.getConfiguration().get("gbsl.ignorePipInstall", false)) {
     return new Promise((resolve) => resolve(false));
   }
-  return uninstallWrongPipVersions()
+  return isPythonInstalled()
+    .then((isInstalled) => {
+      if (!isInstalled) {
+        throw new Error("Python not installed");
+      }
+    })
+    .then(() => {
+      return uninstallWrongPipVersions();
+    })
     .then(() => {
       return vscode.commands.executeCommand("python2go.pipPackages");
     })
     .then((pkgs: any) => {
       return pkgs as PipPackage[];
     })
-    .then((packages) => {
-      const toInstall = PIP_PACKAGES.filter(
-        (pkg) =>
-          !packages.some((installed) => installed.package === pkg.package)
-      );
-      if (toInstall.length > 0) {
-        const target = process.platform === "win32" ? "--user" : "";
-        const toInstallPkgs = toInstall.map((pkg) =>
-          pkg.version ? `${pkg.package}==${pkg.version}` : pkg.package
+    .then(
+      (packages): Thenable<boolean> => {
+        const toInstall = PIP_PACKAGES.filter(
+          (pkg) =>
+            !packages.some((installed) => installed.package === pkg.package)
         );
-        return vscode.commands
-          .executeCommand(
-            "python2go.pip",
-            `install ${target} ${toInstallPkgs.join(" ")}`
-          )
-          .then(() => {
-            return vscode.commands.executeCommand(
-              "workbench.action.reloadWindow"
-            );
-          });
+        if (toInstall.length > 0) {
+          const target = process.platform === "win32" ? "--user" : "";
+          const toInstallPkgs = toInstall.map((pkg) =>
+            pkg.version ? `${pkg.package}==${pkg.version}` : pkg.package
+          );
+          return vscode.commands
+            .executeCommand(
+              "python2go.pip",
+              `install ${target} ${toInstallPkgs.join(" ")}`
+            )
+            .then(() => new Promise((resolve) => resolve(true)));
+        }
+        return new Promise((resolve) => resolve(false));
       }
-      return new Promise((resolve) => resolve());
-    });
+    )
+    .then(
+      (result) => {
+        return result;
+      },
+      (err) => {
+        console.log(err);
+        return false;
+      }
+    );
 }
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
   const configuration = vscode.workspace.getConfiguration();
-  installPipPackages().then(() => {
+
+  installPipPackages().then((reloadWindow) => {
     const configVersion = (context.globalState.get("configVersion") ??
       "0.0.0") as string;
     if (configuration.get("gbsl.ignoreConfigurations", false)) {
@@ -200,13 +229,25 @@ export function activate(context: vscode.ExtensionContext) {
             "workbench.action.reloadWindow"
           );
         });
+    } else if (reloadWindow) {
+      return vscode.commands.executeCommand("workbench.action.reloadWindow");
     }
   });
 
   let configureDisposer = vscode.commands.registerCommand(
     "gbsl.configure",
     () => {
-      return configure(true)
+      return vscode.commands
+        .executeCommand("python2go.configure")
+        .then(
+          () => {
+            return configure(true);
+          },
+          /** configure gbsl settings anyway */
+          () => {
+            return configure(true);
+          }
+        )
         .then(() => {
           vscode.window.showInformationMessage("Configured GBSL settings");
         })
