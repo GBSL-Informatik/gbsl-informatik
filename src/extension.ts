@@ -32,14 +32,14 @@ const PIP_PACKAGES: ToInstallPipPackage[] = [
   { package: "scipy", version: undefined },
   { package: "pandas", version: undefined },
   { package: "termcolor", version: undefined },
-  { package: "smartphone-connector", version: undefined },
+  { package: "smartphone-connector", version: "0.0.19" },
   { package: "pyfiglet", version: undefined },
   { package: "cowsay", version: undefined },
   { package: "inquirer", version: undefined },
   { package: "gTTS", version: undefined },
   { package: "playsound", version: undefined },
   { package: "pynput", version: undefined },
-  { package: "gbsl-turtle", version: "0.0.8" },
+  { package: "gbsl-turtle", version: "0.0.9" },
 ];
 
 const DEFAULT_USER_SETTINGS = {
