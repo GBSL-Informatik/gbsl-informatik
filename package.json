@@ -3,7 +3,7 @@
 	"displayName": "gbsl-informatik",
 	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
-	"version": "0.0.29",
+	"version": "0.0.30",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -32,7 +32,8 @@
 		"hbenl.vscode-test-explorer",
 		"zhuangtongfa.material-theme",
 		"visualstudioexptteam.vscodeintellicode",
-		"ms-python.vscode-pylance"
+		"ms-python.vscode-pylance",
+		"CoenraadS.bracket-pair-colorizer-2"
 	],
 	"activationEvents": [
 		"onStartupFinished"

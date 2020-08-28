@@ -77,6 +77,8 @@ const DEFAULT_USER_SETTINGS = {
     "editor.tabSize": 4,
   },
   "python.analysis.autoImportCompletions": false,
+  "python.showStartPage": false,
+  "python.analysis.completeFunctionParens": true,
 };
 
 function setConfig() {
