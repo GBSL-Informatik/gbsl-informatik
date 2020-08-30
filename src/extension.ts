@@ -32,7 +32,7 @@ const PIP_PACKAGES: ToInstallPipPackage[] = [
   { package: "scipy", version: undefined },
   { package: "pandas", version: undefined },
   { package: "termcolor", version: undefined },
-  { package: "smartphone-connector", version: "0.0.21" },
+  { package: "smartphone-connector", version: "0.0.22" },
   { package: "pyfiglet", version: undefined },
   { package: "cowsay", version: undefined },
   { package: "inquirer", version: undefined },
