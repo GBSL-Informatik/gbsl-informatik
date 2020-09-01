@@ -3,6 +3,28 @@
 import * as vscode from "vscode";
 import { join } from "path";
 import { readFileSync } from "fs";
+import { default as axios } from "axios";
+import { setGistConfig } from "./configFromGist";
+
+let pip_packages_cached: ToInstallPipPackage[] = [];
+/**
+ *
+ * @param gistUrl url to the gist (not the raw), e.g https://gist.github.com/lebalz/8224837c3e4238288bbf2bda5af17fdf
+ */
+function pip_packages(gistUrl: string): Promise<ToInstallPipPackage[]> {
+  if (pip_packages_cached.length > 0) {
+    return new Promise((resolve) => resolve(pip_packages_cached));
+  }
+  return axios
+    .get(`${gistUrl}/raw`, { responseType: "json" })
+    .then((data) => {
+      pip_packages_cached = data.data;
+      return data.data as ToInstallPipPackage[];
+    })
+    .then((error) => {
+      return [] as ToInstallPipPackage[];
+    });
+}
 
 interface PipPackage {
   package: string;
@@ -20,94 +42,24 @@ interface ToInstallPipPackage {
   package: string;
   version?: string;
 }
-const PIP_PACKAGES: ToInstallPipPackage[] = [
-  { package: "pylint", version: undefined },
-  { package: "flake8", version: undefined },
-  { package: "autopep8", version: undefined },
-  { package: "pytest", version: undefined },
-  { package: "ipython", version: undefined },
-  { package: "matplotlib", version: undefined },
-  { package: "jupyter", version: undefined },
-  { package: "numpy", version: undefined },
-  { package: "scipy", version: undefined },
-  { package: "pandas", version: undefined },
-  { package: "termcolor", version: undefined },
-  { package: "smartphone-connector", version: "0.0.22" },
-  { package: "pyfiglet", version: undefined },
-  { package: "cowsay", version: undefined },
-  { package: "inquirer", version: undefined },
-  { package: "gTTS", version: undefined },
-  { package: "playsound", version: undefined },
-  { package: "pynput", version: undefined },
-  { package: "gbsl-turtle", version: "0.0.9" },
-];
 
-const DEFAULT_USER_SETTINGS = {
-  "workbench.colorTheme": "One Dark Pro",
-  "editor.suggestSelection": "first",
-  "vsintellicode.modify.editor.suggestSelection":
-    "automaticallyOverrodeDefaultValue",
-  "keyboard.dispatch": "keyCode",
-  "editor.mouseWheelZoom": true,
-  "workbench.activityBar.visible": true,
-  "python.linting.pylintEnabled": true,
-  "python.linting.enabled": true,
-  "python.dataScience.alwaysTrustNotebooks": true,
-  "python.dataScience.askForKernelRestart": false,
-  "python.dataScience.stopOnFirstLineWhileDebugging": false,
-  "python.formatting.autopep8Args": ["--select=E,W", "--max-line-length=120"],
-  "editor.minimap.enabled": false,
-  "workbench.settings.useSplitJSON": true,
-  "python.languageServer": "Pylance",
-  "breadcrumbs.enabled": false,
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/.pytest_cache": true,
-    "**/__pycache__": true,
-    "**/.vscode": true,
-  },
-  "python.linting.pylintArgs": ["--load-plugin", "pylint_protobuf"],
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "[python]": {
-    "editor.tabSize": 4,
-  },
-  "python.analysis.autoImportCompletions": false,
-  "python.showStartPage": false,
-  "python.analysis.completeFunctionParens": true,
-};
-
-function setConfig() {
-  const configuration = vscode.workspace.getConfiguration();
-  return Object.entries(DEFAULT_USER_SETTINGS).map(async ([key, value]) => {
-    try {
-      return await configuration.update(
-        key as any,
-        value,
-        vscode.ConfigurationTarget.Global
-      );
-    } catch (error) {
-      return await setTimeout(() => {}, 0);
-    }
-  });
-}
-
-function configure(force: boolean = false) {
+function configure(
+  force: boolean = false,
+  silent: boolean = false
+): Promise<number> {
   const configuration = vscode.workspace.getConfiguration();
   const skip = configuration.get("gbsl.ignoreConfigurations", false);
   if (skip && !force) {
-    vscode.window.showInformationMessage(
-      "GBSL Configuration is ignored. Edit your settings"
-    );
-    return new Promise((resolve) => resolve());
+    if (!silent) {
+      vscode.window.showInformationMessage(
+        "GBSL Configuration is ignored. Edit your settings"
+      );
+    }
+    return new Promise((resolve) => resolve(0));
   }
-  vscode.window.showInformationMessage(`Configure vs code`);
-  return Promise.all(setConfig()).then(() => {
-    vscode.window.showInformationMessage(`configuration done`);
+  return setGistConfig().then((updatedPkgs) => {
+    vscode.window.showInformationMessage(`configured ${updatedPkgs} settings`);
+    return updatedPkgs;
   });
 }
 
@@ -124,9 +76,19 @@ function uninstallWrongPipVersions() {
     .then((pkgs: any) => {
       return pkgs as PipPackage[];
     })
+    .then((installed) => {
+      return pip_packages(
+        "https://gist.github.com/lebalz/8224837c3e4238288bbf2bda5af17fdf"
+      ).then((toInstall) => {
+        return {
+          installed: installed,
+          toInstall: toInstall,
+        };
+      });
+    })
     .then((packages) => {
-      const toUninstall = PIP_PACKAGES.filter((pkg) =>
-        packages.some(
+      const toUninstall = packages.toInstall.filter((pkg) =>
+        packages.installed.some(
           (installed) =>
             installed.package === pkg.package &&
             pkg.version !== undefined &&
@@ -175,11 +137,23 @@ function installPipPackages(): Thenable<boolean> {
     .then((pkgs: any) => {
       return pkgs as PipPackage[];
     })
+    .then((installed) => {
+      return pip_packages(
+        "https://gist.github.com/lebalz/8224837c3e4238288bbf2bda5af17fdf"
+      ).then((toInstall) => {
+        return {
+          installed: installed,
+          toInstall: toInstall,
+        };
+      });
+    })
     .then(
       (packages): Thenable<boolean> => {
-        const toInstall = PIP_PACKAGES.filter(
+        const toInstall = packages.toInstall.filter(
           (pkg) =>
-            !packages.some((installed) => installed.package === pkg.package)
+            !packages.installed.some(
+              (installed) => installed.package === pkg.package
+            )
         );
         if (toInstall.length > 0) {
           const target = process.platform === "win32" ? "--user" : "";
@@ -213,26 +187,23 @@ export function activate(context: vscode.ExtensionContext) {
   const configuration = vscode.workspace.getConfiguration();
 
   installPipPackages().then((reloadWindow) => {
-    const configVersion = (context.globalState.get("configVersion") ??
-      "0.0.0") as string;
     if (configuration.get("gbsl.ignoreConfigurations", false)) {
+      if (reloadWindow) {
+        vscode.commands.executeCommand("workbench.action.reloadWindow");
+      }
       return;
     }
-    const pluginVersion = extensionVersion(context);
-    const updateConfig = pluginVersion > configVersion;
 
-    if (updateConfig) {
-      return configure(true)
-        .then(() => {
-          context.globalState.update("configVersion", pluginVersion);
-        })
-        .then(() => {
-          return vscode.commands.executeCommand(
-            "workbench.action.reloadWindow"
-          );
-        });
-    } else if (reloadWindow) {
-      return vscode.commands.executeCommand("workbench.action.reloadWindow");
+    return configure(false, true).then((updatedConfigs) => {
+      if (updatedConfigs > 0 || reloadWindow) {
+        return vscode.commands.executeCommand("workbench.action.reloadWindow");
+      }
+    });
+  });
+
+  vscode.workspace.onDidChangeConfiguration((e) => {
+    if (e.affectsConfiguration("gbsl.gistConfigurationUrl")) {
+      configure();
     }
   });
 

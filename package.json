@@ -3,7 +3,7 @@
 	"displayName": "gbsl-informatik",
 	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
-	"version": "0.0.33",
+	"version": "0.0.34",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -58,6 +58,11 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Wheter to ignore automatic installation of pip packages"
+				},
+				"gbsl.gistConfigurationUrl": {
+					"type": "string",
+					"default": "https://gist.github.com/lebalz/960c2122636c6a32f00902c790851eaf",
+					"description": "Github gist url where the default configuration is downloaded from"
 				}
 			}
 		}
@@ -72,16 +77,21 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.47.0",
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^13.11.0",
-		"eslint": "^6.8.0",
-		"@typescript-eslint/parser": "^2.30.0",
+		"@types/vscode": "^1.47.0",
 		"@typescript-eslint/eslint-plugin": "^2.30.0",
+		"@typescript-eslint/parser": "^2.30.0",
+		"eslint": "^6.8.0",
 		"glob": "^7.1.6",
 		"mocha": "^7.1.2",
 		"typescript": "^3.8.3",
 		"vscode-test": "^1.3.0"
+	},
+	"dependencies": {
+		"@types/lodash": "^4.14.161",
+		"axios": "^0.19.0",
+		"lodash": "^4.17.20"
 	}
 }
