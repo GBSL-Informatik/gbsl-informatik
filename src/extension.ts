@@ -58,7 +58,11 @@ function configure(
     return new Promise((resolve) => resolve(0));
   }
   return setGistConfig().then((updatedPkgs) => {
-    vscode.window.showInformationMessage(`configured ${updatedPkgs} settings`);
+    if (updatedPkgs > 0) {
+      vscode.window.showInformationMessage(
+        `configured ${updatedPkgs} settings`
+      );
+    }
     return updatedPkgs;
   });
 }
@@ -186,19 +190,12 @@ function installPipPackages(): Thenable<boolean> {
 export function activate(context: vscode.ExtensionContext) {
   const configuration = vscode.workspace.getConfiguration();
 
-  installPipPackages().then((reloadWindow) => {
+  installPipPackages().then(() => {
     if (configuration.get("gbsl.ignoreConfigurations", false)) {
-      if (reloadWindow) {
-        vscode.commands.executeCommand("workbench.action.reloadWindow");
-      }
       return;
     }
 
-    return configure(false, true).then((updatedConfigs) => {
-      if (updatedConfigs > 0 || reloadWindow) {
-        return vscode.commands.executeCommand("workbench.action.reloadWindow");
-      }
-    });
+    return configure(false, true);
   });
 
   vscode.workspace.onDidChangeConfiguration((e) => {
@@ -223,11 +220,6 @@ export function activate(context: vscode.ExtensionContext) {
         )
         .then(() => {
           vscode.window.showInformationMessage("Configured GBSL settings");
-        })
-        .then(() => {
-          return vscode.commands.executeCommand(
-            "workbench.action.reloadWindow"
-          );
         });
     }
   );
