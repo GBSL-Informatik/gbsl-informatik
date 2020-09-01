@@ -37,7 +37,9 @@ export function setGistConfig(): Promise<
       if (!configuration.has(key)) {
         return true;
       }
-      if (!_.isEqual(configuration.get(key), value)) {
+      if (
+        !_.isEqual(JSON.parse(JSON.stringify(configuration.get(key))), value)
+      ) {
         return true;
       }
       return false;
