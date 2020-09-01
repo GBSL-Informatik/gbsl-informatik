@@ -58,12 +58,28 @@ function configure(
     return new Promise((resolve) => resolve(0));
   }
   return setGistConfig().then((updatedPkgs) => {
-    if (updatedPkgs > 0) {
+    const successful = updatedPkgs.filter((pkg) => pkg.updated);
+    const err = updatedPkgs.filter((pkg) => !pkg.updated);
+    const errMsg =
+      err.length < 5
+        ? `could not update ${err.map((p) => p.name).join(", ")}`
+        : `could not update ${err.length} settings`;
+    if (successful.length > 5) {
       vscode.window.showInformationMessage(
-        `configured ${updatedPkgs} settings`
+        `configured ${successful.length} settings${
+          err.length > 0 ? errMsg : ""
+        }`
       );
+    } else if (successful.length > 0) {
+      vscode.window.showInformationMessage(
+        `configured ${successful.map((s) => s.name).join(", ")} ${
+          err.length > 0 ? errMsg : ""
+        }`
+      );
+    } else if (err.length > 0) {
+      vscode.window.showWarningMessage(errMsg);
     }
-    return updatedPkgs;
+    return successful.length;
   });
 }
 

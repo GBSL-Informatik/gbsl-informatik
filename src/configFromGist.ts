@@ -24,32 +24,34 @@ function vscodeConfigFromGist(): Promise<Object> {
     });
 }
 
-export function setGistConfig(): Promise<number> {
-  return vscodeConfigFromGist()
-    .then((config) => {
-      const configuration = vscode.workspace.getConfiguration();
-      const toUpdate = Object.entries(config).filter(([key, value]) => {
-        if (!configuration.has(key)) {
-          return true;
-        }
-        if (!_.isEqual(configuration.get(key), value)) {
-          return true;
-        }
-        return false;
-      });
-      return Promise.all(
-        toUpdate.map(async ([key, value]) => {
-          try {
-            return await configuration
-              .update(key as any, value, vscode.ConfigurationTarget.Global)
-              .then(() => true);
-          } catch (error) {
-            return false;
-          }
-        })
-      );
-    })
-    .then((updates) => {
-      return updates.filter((val) => !!val).length;
+export function setGistConfig(): Promise<
+  {
+    name: string;
+    value: any;
+    updated: boolean;
+  }[]
+> {
+  return vscodeConfigFromGist().then((config) => {
+    const configuration = vscode.workspace.getConfiguration();
+    const toUpdate = Object.entries(config).filter(([key, value]) => {
+      if (!configuration.has(key)) {
+        return true;
+      }
+      if (!_.isEqual(configuration.get(key), value)) {
+        return true;
+      }
+      return false;
     });
+    return Promise.all(
+      toUpdate.map(async ([key, value]) => {
+        try {
+          return await configuration
+            .update(key as any, value, vscode.ConfigurationTarget.Global)
+            .then(() => ({ name: key, value: value, updated: true }));
+        } catch (error) {
+          return { name: key, value: value, updated: false };
+        }
+      })
+    );
+  });
 }
