@@ -37,9 +37,11 @@ export function setGistConfig(): Promise<
       if (!configuration.has(key)) {
         return true;
       }
-      if (
-        !_.isEqual(JSON.parse(JSON.stringify(configuration.get(key))), value)
-      ) {
+      const sanitizedCurrent = JSON.parse(
+        JSON.stringify(configuration.get(key))
+      );
+      const sanitizedNew = JSON.parse(JSON.stringify(value));
+      if (!_.isEqual(sanitizedCurrent, sanitizedNew)) {
         return true;
       }
       return false;
