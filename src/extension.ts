@@ -3,13 +3,6 @@
 import * as vscode from "vscode";
 import { setGistConfig } from "./configFromGist";
 
-interface PyVersion {
-  major: number;
-  minor: number;
-  release: number;
-  version: string;
-}
-
 function configure(
   force: boolean = false,
   silent: boolean = false
@@ -50,12 +43,6 @@ function configure(
     }
     return successful.length;
   });
-}
-
-function isPythonInstalled(): Thenable<PyVersion | undefined | false> {
-  return vscode.commands.executeCommand<PyVersion | false>(
-    "python2go.isPythonInstalled"
-  );
 }
 
 // this method is called when your extension is activated
