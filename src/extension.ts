@@ -57,12 +57,14 @@ function configure(
     }
     return new Promise((resolve) => resolve(0));
   }
-  return setGistConfig().then((updatedPkgs) => {
-    const successful = updatedPkgs.filter((pkg) => pkg.updated);
-    const err = updatedPkgs.filter((pkg) => !pkg.updated);
+  return setGistConfig().then((settings) => {
+    const successful = settings.filter(
+      (s) => s.updated && s.name !== "files.exclude"
+    );
+    const err = settings.filter((s) => !s.updated);
     const errMsg =
       err.length < 5
-        ? `could not update ${err.map((p) => p.name).join(", ")}`
+        ? `could not update ${err.map((s) => s.name).join(", ")}`
         : `could not update ${err.length} settings`;
     if (successful.length > 5) {
       vscode.window.showInformationMessage(
