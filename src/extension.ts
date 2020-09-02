@@ -27,7 +27,7 @@ function configure(
         ? `could not update ${err.map((s) => s.name).join(", ")}`
         : `could not update ${err.length} settings`;
     if (successful.length > 5) {
-      vscode.window.showInformationMessage(
+      console.log(
         `configured ${successful.length} settings${
           err.length > 0 ? errMsg : ""
         }`
@@ -39,7 +39,7 @@ function configure(
         }`
       );
     } else if (err.length > 0) {
-      vscode.window.showWarningMessage(errMsg);
+      console.log(errMsg);
     }
     return successful.length;
   });

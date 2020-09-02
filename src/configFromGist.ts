@@ -17,9 +17,11 @@ function vscodeConfigFromGist(): Promise<Object> {
       return data.data;
     })
     .catch((error) => {
-      vscode.window.showErrorMessage(
-        `Gist Content could not be downloaded from ${gistUrl}: ${error}`
-      );
+      if (error.code !== "ENOTFOUND") {
+        vscode.window.showErrorMessage(
+          `Gist Content could not be downloaded from ${gistUrl}: ${error}`
+        );
+      }
       return {};
     });
 }
