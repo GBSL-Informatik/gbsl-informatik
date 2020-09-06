@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { setGistConfig } from "./configFromGist";
+import { Logger } from "./logger";
 
 function configure(
   force: boolean = false,
@@ -27,19 +28,19 @@ function configure(
         ? `could not update ${err.map((s) => s.name).join(", ")}`
         : `could not update ${err.length} settings`;
     if (successful.length > 5) {
-      console.log(
+      Logger.log(
         `configured ${successful.length} settings${
           err.length > 0 ? errMsg : ""
         }`
       );
     } else if (successful.length > 0) {
-      vscode.window.showInformationMessage(
+      Logger.log(
         `configured ${successful.map((s) => s.name).join(", ")} ${
           err.length > 0 ? errMsg : ""
         }`
       );
     } else if (err.length > 0) {
-      console.log(errMsg);
+      Logger.log(errMsg);
     }
     return successful.length;
   });
@@ -48,6 +49,7 @@ function configure(
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  Logger.configure("gsbl-informatik", "GBSL Informatik");
   const configuration = vscode.workspace.getConfiguration();
 
   if (!configuration.get("gbsl.ignoreConfigurations", false)) {
@@ -75,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
           }
         )
         .then(() => {
-          vscode.window.showInformationMessage("Configured GBSL settings");
+          Logger.log("Configured GBSL settings");
         });
     }
   );
