@@ -47,8 +47,8 @@ To install, e.g. the needed `python` version, click `Install Now` on the followi
 Or you can install over the command palette:
 
 - View > Command Palette... > `Python2Go: Install`
-    - **windows**: you may be prompted to allow vs code running powershell with administrator privileges.
-    - **osx**: you may be prompted for your user password
+  - **windows**: you may be prompted to allow vs code running powershell with administrator privileges.
+  - **osx**: you may be prompted for your user password
 
 Then restart your vs code and start using it 🎉
 
@@ -59,3 +59,13 @@ Then restart your vs code and start using it 🎉
 ```sh
 vsce package && vsce publish
 ```
+
+| Wert           | Typ     | Transformation -> | Resultat                        | Typ     |
+| :------------- | :------ | :---------------- | :------------------------------ | :------ |
+| `a = "12"`     | `str`   | `int(a)`          | `12`                            | `int`   |
+| `a = "12.0"`   | `str`   | `int(a)`          | `ValueError` - keine ganze Zahl |         |
+| `a = "12"`     | `str`   | `float(a)`        | `12.0`                          | `float` |
+| `a = "12.0"`   | `str`   | `float(a)`        | `12.0`                          | `float` |
+| `a = "Hansli"` | `str`   | `float(a)`        | `ValueError` - keine Zahl       |         |
+| `a = 15`       | `int`   | `str(a)`          | `"15"`                          | `str`   |
+| `a = 3.141592` | `float` | `str(a)`          | `"3.141592653589793"`           | `str`   |

@@ -3,7 +3,7 @@
 	"displayName": "gbsl-informatik",
 	"publisher": "lebalz",
 	"description": "includes all dependencies to start programming with python",
-	"version": "0.0.42",
+	"version": "0.0.43",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -26,6 +26,7 @@
 	],
 	"extensionPack": [
 		"lebalz.python2go",
+		"ritwickdey.liveserver",
 		"ms-python.python",
 		"bierner.markdown-preview-github-styles",
 		"LittleFoxTeam.vscode-python-test-adapter",
